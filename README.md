@@ -9,7 +9,14 @@ To explore this approach within the vg toolkit, two subcommands were updated:
 - `vg gamsort` to sort and index bgzipped GAF files
 - `vg annotate` to project annotation on the latest HPRC pangenomes.
 
-Disclaimer: this is still experimental. The goal is to see what we can do already with minimal development. Multiple parts of the analysis below could be improved to make the whole process easier and more useful.
+Disclaimer: this is still experimental. The goal is to see what we can do already with minimal development. Multiple parts of the analysis below could be improved to make the whole process easier and the results more useful.
+
+- [Tools/dependencies](#toolsdependencies)
+- [Annotation data](#annotation-data)
+- [Pangenome](#pangenome)
+- [Workflow](#workflow)
+- [Pre-processing of the annotation files](#pre-processing-of-the-annotation-files)
+- [Visualization](#visualization)
 
 ## Tools/dependencies
 
@@ -119,7 +126,7 @@ python3 pre-vg-annotate.py -i {input} --add-suffix "{suff}" --add-rep-n | gzip >
 
 where: 
 
--`{suff}` is the haplotype name suffix (e.g. `#HG00438#1`) to add to the repeat name.
+- `{suff}` is the haplotype name suffix (e.g. `#HG00438#1`) to add to the repeat name.
 - `--add-rep-n` to format the repeat names as `(<MOTIF>)<N>`
 
 ### Pre-process segmental duplications
@@ -130,7 +137,7 @@ python3 pre-vg-annotate.py -i {input} --add-suffix "{suff}" --add-len-fracm | gz
 
 where: 
 
--`{suff}` is the haplotype name suffix (e.g. `#HG00438#1`) to add to the SD name.
+- `{suff}` is the haplotype name suffix (e.g. `#HG00438#1`) to add to the SD name.
 - `--add-len-fracm` to name the SD as `<LENGTH>bp_<FRACMATCH>`
 
 ### Pre-process RepeatMasker annotation
@@ -141,7 +148,7 @@ python3 pre-vg-annotate.py -i {input} --add-suffix "{suff}" --add-rm-class | gzi
 
 where: 
 
--`{suff}` is the haplotype name suffix (e.g. `#HG00438#1`) to add to the SD name.
+- `{suff}` is the haplotype name suffix (e.g. `#HG00438#1`) to add to the SD name.
 - `--add-rm-class` to prefix the repeat name with its class
 
 ## Visualization
