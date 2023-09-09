@@ -1,0 +1,351 @@
+Building DAG of jobs...
+Job stats:
+job                        count    min threads    max threads
+-----------------------  -------  -------------  -------------
+dwl_cat_gene_annotation        1              1              1
+dwl_rm_annotation              1              1              1
+dwl_sd_annotation              1              1              1
+dwl_trf_annotation             1              1              1
+dwl_xg_gbwt                    1              1              1
+index_gaf                      4              1              1
+make_gbz                       1              1              1
+prepare_cat_genes              1              1              1
+prepare_haplotype_gbz          1              1              1
+prepare_repeat_masker          1              1              1
+prepare_segdups                1              1              1
+prepare_trf_repeats            1              1              1
+run                            1              1              1
+sort_gaf                       4              1              1
+vg_annotate_bed                3              1              1
+vg_annotate_gff3               1              1              1
+total                         24              1              1
+
+
+[Sat Sep  9 08:28:01 2023]
+rule dwl_xg_gbwt:
+    output: hprc-v1.0-mc-chm13.xg, hprc-v1.0-mc-chm13.gbwt
+    jobid: 7
+    reason: Missing output files: hprc-v1.0-mc-chm13.gbwt, hprc-v1.0-mc-chm13.xg
+    resources: tmpdir=/tmp, mem_mb=4GB, runtime=60
+
+
+        wget https://s3-us-west-2.amazonaws.com/human-pangenomics/pangenomes/freeze/freeze1/minigraph-cactus/hprc-v1.0-mc-chm13.xg
+        wget https://s3-us-west-2.amazonaws.com/human-pangenomics/pangenomes/freeze/freeze1/minigraph-cactus/hprc-v1.0-mc-chm13.gbwt
+        
+
+[Sat Sep  9 08:28:01 2023]
+rule dwl_rm_annotation:
+    output: raw_annotation/HG00438.1.f1_assembly_v2_genbank_rm.bed
+    jobid: 19
+    reason: Missing output files: raw_annotation/HG00438.1.f1_assembly_v2_genbank_rm.bed
+    wildcards: haplotype=HG00438.1
+    resources: tmpdir=/tmp, mem_mb=4GB, runtime=60
+
+wget -O raw_annotation/HG00438.1.f1_assembly_v2_genbank_rm.bed https://s3-us-west-2.amazonaws.com/human-pangenomics/working/HPRC/HG00438/assemblies/year1_f1_assembly_v2_genbank/annotation/repeat_masker/HG00438.paternal.f1_assembly_v2_genbank_rm.bed
+
+[Sat Sep  9 08:28:01 2023]
+rule dwl_trf_annotation:
+    output: raw_annotation/HG00438.1.trf.bed.gz
+    jobid: 11
+    reason: Missing output files: raw_annotation/HG00438.1.trf.bed.gz
+    wildcards: haplotype=HG00438.1
+    resources: tmpdir=/tmp, mem_mb=4GB, runtime=60
+
+wget -O raw_annotation/HG00438.1.trf.bed.gz https://s3-us-west-2.amazonaws.com/human-pangenomics/working/HPRC/HG00438/assemblies/year1_f1_assembly_v2_genbank/annotation/trf/HG00438.pat.trf.bed.gz
+
+[Sat Sep  9 08:28:01 2023]
+rule dwl_sd_annotation:
+    output: raw_annotation/HG00438.1.sedef.bedpe
+    jobid: 15
+    reason: Missing output files: raw_annotation/HG00438.1.sedef.bedpe
+    wildcards: haplotype=HG00438.1
+    resources: tmpdir=/tmp, mem_mb=4GB, runtime=60
+
+wget -O raw_annotation/HG00438.1.sedef.bedpe https://s3-us-west-2.amazonaws.com/human-pangenomics/working/HPRC/HG00438/assemblies/year1_f1_assembly_v2_genbank/annotation/seg_dups/HG00438.paternal.sedef.bedpe
+
+[Sat Sep  9 08:28:01 2023]
+rule dwl_cat_gene_annotation:
+    output: raw_annotation/HG00438.1.chm13.gff3.gz
+    jobid: 4
+    reason: Missing output files: raw_annotation/HG00438.1.chm13.gff3.gz
+    wildcards: haplotype=HG00438.1
+    resources: tmpdir=/tmp, mem_mb=4GB, runtime=60
+
+wget -O raw_annotation/HG00438.1.chm13.gff3.gz https://s3-us-west-2.amazonaws.com/human-pangenomics/working/HPRC/HG00438/assemblies/year1_f1_assembly_v2_genbank/annotation/cat_genes/HG00438.1.chm13.gff3.gz
+
+[Sat Sep  9 08:28:01 2023]
+rule prepare_repeat_masker:
+    input: raw_annotation/HG00438.1.f1_assembly_v2_genbank_rm.bed
+    output: prep_annotation/rm_HG00438.1.bed.gz
+    jobid: 18
+    benchmark: benchmark/prep_repeat_masker.HG00438.1.benchmark.tsv
+    reason: Missing output files: prep_annotation/rm_HG00438.1.bed.gz; Input files updated by another job: raw_annotation/HG00438.1.f1_assembly_v2_genbank_rm.bed
+    wildcards: haplotype=HG00438.1
+    resources: tmpdir=/tmp, mem_mb=8GB, runtime=180
+
+
+        python3 pre-vg-annotate.py -i raw_annotation/HG00438.1.f1_assembly_v2_genbank_rm.bed --add-suffix "#HG00438#1" --add-rm-class | gzip > prep_annotation/rm_HG00438.1.bed.gz
+        
+
+[Sat Sep  9 08:28:01 2023]
+rule prepare_trf_repeats:
+    input: raw_annotation/HG00438.1.trf.bed.gz
+    output: prep_annotation/trf_HG00438.1.bed.gz
+    jobid: 10
+    benchmark: benchmark/prep_trf_repeats.HG00438.1.benchmark.tsv
+    reason: Missing output files: prep_annotation/trf_HG00438.1.bed.gz; Input files updated by another job: raw_annotation/HG00438.1.trf.bed.gz
+    wildcards: haplotype=HG00438.1
+    resources: tmpdir=/tmp, mem_mb=8GB, runtime=180
+
+
+        python3 pre-vg-annotate.py -i raw_annotation/HG00438.1.trf.bed.gz --add-suffix "#HG00438#1" --add-rep-n | gzip > prep_annotation/trf_HG00438.1.bed.gz
+        
+
+[Sat Sep  9 08:28:01 2023]
+rule prepare_segdups:
+    input: raw_annotation/HG00438.1.sedef.bedpe
+    output: prep_annotation/sd_HG00438.1.bed.gz
+    jobid: 14
+    benchmark: benchmark/prep_segdups.HG00438.1.benchmark.tsv
+    reason: Missing output files: prep_annotation/sd_HG00438.1.bed.gz; Input files updated by another job: raw_annotation/HG00438.1.sedef.bedpe
+    wildcards: haplotype=HG00438.1
+    resources: tmpdir=/tmp, mem_mb=8GB, runtime=180
+
+
+        python3 pre-vg-annotate.py -i raw_annotation/HG00438.1.sedef.bedpe --add-suffix "#HG00438#1" --add-len-fracm | gzip > prep_annotation/sd_HG00438.1.bed.gz
+        
+
+[Sat Sep  9 08:28:01 2023]
+rule prepare_cat_genes:
+    input: raw_annotation/HG00438.1.chm13.gff3.gz
+    output: prep_annotation/gene_HG00438.1.gff3.gz
+    jobid: 3
+    benchmark: benchmark/prep_cat_gene.HG00438.1.benchmark.tsv
+    reason: Missing output files: prep_annotation/gene_HG00438.1.gff3.gz; Input files updated by another job: raw_annotation/HG00438.1.chm13.gff3.gz
+    wildcards: haplotype=HG00438.1
+    resources: tmpdir=/tmp, mem_mb=8GB, runtime=180
+
+python3 pre-vg-annotate.py -i raw_annotation/HG00438.1.chm13.gff3.gz --add-prefix HG00438#1# --use-name-id | gzip > prep_annotation/gene_HG00438.1.gff3.gz
+
+[Sat Sep  9 08:28:01 2023]
+rule make_gbz:
+    input: hprc-v1.0-mc-chm13.xg, hprc-v1.0-mc-chm13.gbwt
+    output: hprc-v1.0-mc-chm13.gbz
+    jobid: 6
+    reason: Missing output files: hprc-v1.0-mc-chm13.gbz; Input files updated by another job: hprc-v1.0-mc-chm13.gbwt, hprc-v1.0-mc-chm13.xg
+    resources: tmpdir=/tmp, mem_mb=40GB, runtime=360
+
+
+        vg gbwt -x hprc-v1.0-mc-chm13.xg -E -o temp_paths.gbwt
+        vg gbwt -R CHM13 -R _gbwt_ref -o temp_noref.gbwt hprc-v1.0-mc-chm13.gbwt
+        vg gbwt -m temp_noref.gbwt temp_paths.gbwt -o temp_comb.gbwt
+        vg gbwt -x hprc-v1.0-mc-chm13.xg temp_comb.gbwt --gbz-format -g hprc-v1.0-mc-chm13.gbz
+        rm -f temp_paths.gbwt temp_noref.gbwt temp_comb.gbwt
+        
+
+[Sat Sep  9 08:28:01 2023]
+rule prepare_haplotype_gbz:
+    input: hprc-v1.0-mc-chm13.gbz
+    output: gbz/HG00438.hprc-v1.0-mc-chm13.gbz
+    jobid: 5
+    benchmark: benchmark/prep_haplotype_gbz.HG00438.-v1.0-mc-chm13.benchmark.tsv
+    reason: Missing output files: gbz/HG00438.hprc-v1.0-mc-chm13.gbz; Input files updated by another job: hprc-v1.0-mc-chm13.gbz
+    wildcards: sample=HG00438, graph=-v1.0-mc-chm13
+    resources: tmpdir=/tmp, mem_mb=25GB, runtime=60
+
+
+        vg gbwt -Z --set-tag "reference_samples=HG00438" --gbz-format -g gbz/HG00438.hprc-v1.0-mc-chm13.gbz hprc-v1.0-mc-chm13.gbz
+        
+
+[Sat Sep  9 08:28:01 2023]
+rule vg_annotate_bed:
+    input: prep_annotation/sd_HG00438.1.bed.gz, gbz/HG00438.hprc-v1.0-mc-chm13.gbz
+    output: unsorted_gaf/sd_HG00438.1.gaf.gz
+    log: log/vg_annotate.sd_HG00438.1.log
+    jobid: 13
+    benchmark: benchmark/vg_annotate.sd_HG00438.1.benchmark.tsv
+    reason: Missing output files: unsorted_gaf/sd_HG00438.1.gaf.gz; Input files updated by another job: gbz/HG00438.hprc-v1.0-mc-chm13.gbz, prep_annotation/sd_HG00438.1.bed.gz
+    wildcards: anno_type=sd, sample=HG00438, haplotype=1
+    resources: tmpdir=/tmp, mem_mb=100GB, runtime=1200
+
+gunzip -c prep_annotation/sd_HG00438.1.bed.gz | vg annotate -x gbz/HG00438.hprc-v1.0-mc-chm13.gbz -b - 2> log/vg_annotate.sd_HG00438.1.log | vg convert -G - gbz/HG00438.hprc-v1.0-mc-chm13.gbz | gzip > unsorted_gaf/sd_HG00438.1.gaf.gz
+
+[Sat Sep  9 08:28:01 2023]
+rule vg_annotate_bed:
+    input: prep_annotation/trf_HG00438.1.bed.gz, gbz/HG00438.hprc-v1.0-mc-chm13.gbz
+    output: unsorted_gaf/trf_HG00438.1.gaf.gz
+    log: log/vg_annotate.trf_HG00438.1.log
+    jobid: 9
+    benchmark: benchmark/vg_annotate.trf_HG00438.1.benchmark.tsv
+    reason: Missing output files: unsorted_gaf/trf_HG00438.1.gaf.gz; Input files updated by another job: prep_annotation/trf_HG00438.1.bed.gz, gbz/HG00438.hprc-v1.0-mc-chm13.gbz
+    wildcards: anno_type=trf, sample=HG00438, haplotype=1
+    resources: tmpdir=/tmp, mem_mb=100GB, runtime=1200
+
+gunzip -c prep_annotation/trf_HG00438.1.bed.gz | vg annotate -x gbz/HG00438.hprc-v1.0-mc-chm13.gbz -b - 2> log/vg_annotate.trf_HG00438.1.log | vg convert -G - gbz/HG00438.hprc-v1.0-mc-chm13.gbz | gzip > unsorted_gaf/trf_HG00438.1.gaf.gz
+
+[Sat Sep  9 08:28:01 2023]
+rule vg_annotate_gff3:
+    input: prep_annotation/gene_HG00438.1.gff3.gz, gbz/HG00438.hprc-v1.0-mc-chm13.gbz
+    output: unsorted_gaf/gene_HG00438.1.gaf.gz
+    log: log/vg_annotate.gene_HG00438.1.log
+    jobid: 2
+    benchmark: benchmark/vg_annotate.gene_HG00438.1.benchmark.tsv
+    reason: Missing output files: unsorted_gaf/gene_HG00438.1.gaf.gz; Input files updated by another job: prep_annotation/gene_HG00438.1.gff3.gz, gbz/HG00438.hprc-v1.0-mc-chm13.gbz
+    wildcards: anno_type=gene, sample=HG00438, haplotype=1
+    resources: tmpdir=/tmp, mem_mb=100GB, runtime=600
+
+gunzip -c prep_annotation/gene_HG00438.1.gff3.gz | vg annotate -x gbz/HG00438.hprc-v1.0-mc-chm13.gbz -f - 2> log/vg_annotate.gene_HG00438.1.log | vg convert -G - gbz/HG00438.hprc-v1.0-mc-chm13.gbz | gzip > unsorted_gaf/gene_HG00438.1.gaf.gz
+
+[Sat Sep  9 08:28:01 2023]
+rule vg_annotate_bed:
+    input: prep_annotation/rm_HG00438.1.bed.gz, gbz/HG00438.hprc-v1.0-mc-chm13.gbz
+    output: unsorted_gaf/rm_HG00438.1.gaf.gz
+    log: log/vg_annotate.rm_HG00438.1.log
+    jobid: 17
+    benchmark: benchmark/vg_annotate.rm_HG00438.1.benchmark.tsv
+    reason: Missing output files: unsorted_gaf/rm_HG00438.1.gaf.gz; Input files updated by another job: gbz/HG00438.hprc-v1.0-mc-chm13.gbz, prep_annotation/rm_HG00438.1.bed.gz
+    wildcards: anno_type=rm, sample=HG00438, haplotype=1
+    resources: tmpdir=/tmp, mem_mb=100GB, runtime=1200
+
+gunzip -c prep_annotation/rm_HG00438.1.bed.gz | vg annotate -x gbz/HG00438.hprc-v1.0-mc-chm13.gbz -b - 2> log/vg_annotate.rm_HG00438.1.log | vg convert -G - gbz/HG00438.hprc-v1.0-mc-chm13.gbz | gzip > unsorted_gaf/rm_HG00438.1.gaf.gz
+
+[Sat Sep  9 08:28:01 2023]
+rule sort_gaf:
+    input: unsorted_gaf/gene_HG00438.1.gaf.gz
+    output: gaf/gene_HG00438.1.gaf.gz
+    jobid: 1
+    benchmark: benchmark/sort_gaf.gene_HG00438.1.benchmark.tsv
+    reason: Missing output files: gaf/gene_HG00438.1.gaf.gz; Input files updated by another job: unsorted_gaf/gene_HG00438.1.gaf.gz
+    wildcards: type=gene, haplotype=HG00438.1
+    resources: tmpdir=/tmp, mem_mb=8GB, runtime=180
+
+
+        vg gamsort -t 1 -pG unsorted_gaf/gene_HG00438.1.gaf.gz | bgzip > gaf/gene_HG00438.1.gaf.gz
+        
+
+[Sat Sep  9 08:28:01 2023]
+rule sort_gaf:
+    input: unsorted_gaf/trf_HG00438.1.gaf.gz
+    output: gaf/trf_HG00438.1.gaf.gz
+    jobid: 8
+    benchmark: benchmark/sort_gaf.trf_HG00438.1.benchmark.tsv
+    reason: Missing output files: gaf/trf_HG00438.1.gaf.gz; Input files updated by another job: unsorted_gaf/trf_HG00438.1.gaf.gz
+    wildcards: type=trf, haplotype=HG00438.1
+    resources: tmpdir=/tmp, mem_mb=8GB, runtime=180
+
+
+        vg gamsort -t 1 -pG unsorted_gaf/trf_HG00438.1.gaf.gz | bgzip > gaf/trf_HG00438.1.gaf.gz
+        
+
+[Sat Sep  9 08:28:01 2023]
+rule sort_gaf:
+    input: unsorted_gaf/rm_HG00438.1.gaf.gz
+    output: gaf/rm_HG00438.1.gaf.gz
+    jobid: 16
+    benchmark: benchmark/sort_gaf.rm_HG00438.1.benchmark.tsv
+    reason: Missing output files: gaf/rm_HG00438.1.gaf.gz; Input files updated by another job: unsorted_gaf/rm_HG00438.1.gaf.gz
+    wildcards: type=rm, haplotype=HG00438.1
+    resources: tmpdir=/tmp, mem_mb=8GB, runtime=180
+
+
+        vg gamsort -t 1 -pG unsorted_gaf/rm_HG00438.1.gaf.gz | bgzip > gaf/rm_HG00438.1.gaf.gz
+        
+
+[Sat Sep  9 08:28:01 2023]
+rule sort_gaf:
+    input: unsorted_gaf/sd_HG00438.1.gaf.gz
+    output: gaf/sd_HG00438.1.gaf.gz
+    jobid: 12
+    benchmark: benchmark/sort_gaf.sd_HG00438.1.benchmark.tsv
+    reason: Missing output files: gaf/sd_HG00438.1.gaf.gz; Input files updated by another job: unsorted_gaf/sd_HG00438.1.gaf.gz
+    wildcards: type=sd, haplotype=HG00438.1
+    resources: tmpdir=/tmp, mem_mb=8GB, runtime=180
+
+
+        vg gamsort -t 1 -pG unsorted_gaf/sd_HG00438.1.gaf.gz | bgzip > gaf/sd_HG00438.1.gaf.gz
+        
+
+[Sat Sep  9 08:28:01 2023]
+rule index_gaf:
+    input: gaf/rm_HG00438.1.gaf.gz
+    output: gaf/rm_HG00438.1.gaf.gz.tbi
+    jobid: 23
+    benchmark: benchmark/index_gaf.rm_HG00438.1.benchmark.tsv
+    reason: Missing output files: gaf/rm_HG00438.1.gaf.gz.tbi; Input files updated by another job: gaf/rm_HG00438.1.gaf.gz
+    wildcards: type=rm, haplotype=HG00438.1
+    resources: tmpdir=/tmp, mem_mb=8GB, runtime=60
+
+tabix -p gaf gaf/rm_HG00438.1.gaf.gz
+
+[Sat Sep  9 08:28:01 2023]
+rule index_gaf:
+    input: gaf/gene_HG00438.1.gaf.gz
+    output: gaf/gene_HG00438.1.gaf.gz.tbi
+    jobid: 20
+    benchmark: benchmark/index_gaf.gene_HG00438.1.benchmark.tsv
+    reason: Missing output files: gaf/gene_HG00438.1.gaf.gz.tbi; Input files updated by another job: gaf/gene_HG00438.1.gaf.gz
+    wildcards: type=gene, haplotype=HG00438.1
+    resources: tmpdir=/tmp, mem_mb=8GB, runtime=60
+
+tabix -p gaf gaf/gene_HG00438.1.gaf.gz
+
+[Sat Sep  9 08:28:01 2023]
+rule index_gaf:
+    input: gaf/trf_HG00438.1.gaf.gz
+    output: gaf/trf_HG00438.1.gaf.gz.tbi
+    jobid: 21
+    benchmark: benchmark/index_gaf.trf_HG00438.1.benchmark.tsv
+    reason: Missing output files: gaf/trf_HG00438.1.gaf.gz.tbi; Input files updated by another job: gaf/trf_HG00438.1.gaf.gz
+    wildcards: type=trf, haplotype=HG00438.1
+    resources: tmpdir=/tmp, mem_mb=8GB, runtime=60
+
+tabix -p gaf gaf/trf_HG00438.1.gaf.gz
+
+[Sat Sep  9 08:28:01 2023]
+rule index_gaf:
+    input: gaf/sd_HG00438.1.gaf.gz
+    output: gaf/sd_HG00438.1.gaf.gz.tbi
+    jobid: 22
+    benchmark: benchmark/index_gaf.sd_HG00438.1.benchmark.tsv
+    reason: Missing output files: gaf/sd_HG00438.1.gaf.gz.tbi; Input files updated by another job: gaf/sd_HG00438.1.gaf.gz
+    wildcards: type=sd, haplotype=HG00438.1
+    resources: tmpdir=/tmp, mem_mb=8GB, runtime=60
+
+tabix -p gaf gaf/sd_HG00438.1.gaf.gz
+
+[Sat Sep  9 08:28:01 2023]
+localrule run:
+    input: gaf/gene_HG00438.1.gaf.gz, gaf/trf_HG00438.1.gaf.gz, gaf/sd_HG00438.1.gaf.gz, gaf/rm_HG00438.1.gaf.gz, gaf/gene_HG00438.1.gaf.gz.tbi, gaf/trf_HG00438.1.gaf.gz.tbi, gaf/sd_HG00438.1.gaf.gz.tbi, gaf/rm_HG00438.1.gaf.gz.tbi
+    jobid: 0
+    reason: Input files updated by another job: gaf/rm_HG00438.1.gaf.gz.tbi, gaf/rm_HG00438.1.gaf.gz, gaf/gene_HG00438.1.gaf.gz, gaf/sd_HG00438.1.gaf.gz.tbi, gaf/trf_HG00438.1.gaf.gz, gaf/trf_HG00438.1.gaf.gz.tbi, gaf/gene_HG00438.1.gaf.gz.tbi, gaf/sd_HG00438.1.gaf.gz
+    resources: tmpdir=/tmp
+
+Job stats:
+job                        count    min threads    max threads
+-----------------------  -------  -------------  -------------
+dwl_cat_gene_annotation        1              1              1
+dwl_rm_annotation              1              1              1
+dwl_sd_annotation              1              1              1
+dwl_trf_annotation             1              1              1
+dwl_xg_gbwt                    1              1              1
+index_gaf                      4              1              1
+make_gbz                       1              1              1
+prepare_cat_genes              1              1              1
+prepare_haplotype_gbz          1              1              1
+prepare_repeat_masker          1              1              1
+prepare_segdups                1              1              1
+prepare_trf_repeats            1              1              1
+run                            1              1              1
+sort_gaf                       4              1              1
+vg_annotate_bed                3              1              1
+vg_annotate_gff3               1              1              1
+total                         24              1              1
+
+Reasons:
+    (check individual jobs above for details)
+    input files updated by another job:
+        index_gaf, make_gbz, prepare_cat_genes, prepare_haplotype_gbz, prepare_repeat_masker, prepare_segdups, prepare_trf_repeats, run, sort_gaf, vg_annotate_bed, vg_annotate_gff3
+    missing output files:
+        dwl_cat_gene_annotation, dwl_rm_annotation, dwl_sd_annotation, dwl_trf_annotation, dwl_xg_gbwt, index_gaf, make_gbz, prepare_cat_genes, prepare_haplotype_gbz, prepare_repeat_masker, prepare_segdups, prepare_trf_repeats, sort_gaf, vg_annotate_bed, vg_annotate_gff3
+
+This was a dry-run (flag -n). The order of jobs does not reflect the order of execution.
