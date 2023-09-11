@@ -186,11 +186,16 @@ docker run -it -v `pwd`:/data -p 3000:3000 quay.io/jmonlong/sequencetubemap:gaf
 
 Then open a browser at http://localhost:3000/.
 
-Of note, it might 
+Of note, it might help to down-sample the haplotype shown in the pangenome.
+For example, only HG00621's haplotypes are shows in the above example.
+Those haplotypes were integrated as paths in the pangenome beforehand (there might be an easier way to do this!):
 
 ```sh
+## list the haplotypes of interest as alignments
 vg paths -S HG00621 -g hprc-v1.0-mc-chm13.gbwt -x hprc-v1.0-mc-chm13.xg -A | gzip > HG00621.haps.gaf.gz
+## annotate these alignements as paths in the graph
 vg convert -p hprc-v1.0-mc-chm13.xg | vg augment -B -F - HG00621.haps.gaf.gz > hprc-v1.0-mc-chm13.HG00621.vg
+## make a XG index
 vg index -x hprc-v1.0-mc-chm13.HG00621.xg hprc-v1.0-mc-chm13.HG00621.vg
 ```
 
