@@ -1,6 +1,6 @@
 # GAF annotation experiment for the HPRC 2023 Annual Meeting
 
-This repo describes an experiment to use GAFs to represent annotations in a pangenome graph.
+This repo describes an experiment to use GAFs to represent annotations in a pangenome graph. See the [poster presented for the 2023 HPRC Annual Meeting](poster.pdf).
 
 A genomic range can be represented as a path in the pangenome. 
 The [Graph Alignment Format (GAF) text format](https://github.com/lh3/gfatools/blob/master/doc/rGFA.md#the-graph-alignment-format-gaf), which was proposed to represent alignments, could be used to represent any type of annotation in a pangenome graph. 
